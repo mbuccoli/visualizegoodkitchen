@@ -1,0 +1,9 @@
+Cose da fare
+1) recipes.py --> prendere tutte le ricette e fare il parsing per raccogliere: titolo, immagine, ingredienti, calorie, tags, eventualmente procedura e salvare in json.
+
+2) correggere eventuali ricette/ingredienti e creare due matrici: una per gli ingredienti/ricetta e una tags/ricetta; gli ingredienti sono normalizzati per persona (gli ingredienti si riferiscono ad una porzione) e per ricetta (la somma degli ingredienti deve fare 1, dove possibile). Salvare le tabelle (pandas)
+
+3) iniziare analisi vera e propria: proposte da aggiungere qui:
+3.1) applicare T-SNE alla tabella degli ingredienti e creare mappa delle ricette. Visualizzare su pagina web
+...
+etc
