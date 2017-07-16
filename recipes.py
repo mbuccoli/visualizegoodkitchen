@@ -136,14 +136,14 @@ class RecipeParser(GenericParser):
 			self.ingredients.append(data.lower())
 		elif self.checks["tags"]:
 			self.tags.append(data.lower())			
-	def analyze_url(self):
+	def analyze_url(self, time_wait=0):
+		time.sleep(time_wait)
 		logger.info("Analysing %s"%self.url)
 		try:			
 			GenericParser.analyze_url(self, self.url)
 		except HTTPError as HE:
 			if "too many requests" in str(HE).lower():
-				time.sleep(3)
-				self.analyze_url()
+				self.analyze_url(time_wait+1)
 		
 	def __clean(self,what):
 		new_items=[]
@@ -181,7 +181,7 @@ class RecipeParser(GenericParser):
 	def load(self, fn=""):
 		with open(fn,'r') as fp:
 			obj=json.load(fp)
-		for k in self.keys():
+		for k in self.keys:
 			self.__dict__[k]=obj[k]
 	
 	def __repr__(self):
@@ -192,31 +192,51 @@ class RecipeParser(GenericParser):
 		
 def get_recipes(recompute):
 	if not os.path.exists(out_file) or recompute:
+		logger.info("Downloading the list of links of recipes")
 		IP=IndexParser()
 		IP.analyze_url(index_url)
 		IP.save_recipes(out_file)
 		recipes_links=IP.recipes_links
 	else:
+		logger.info("Loading the list of links of recipes")
 		with open(out_file,'r') as fp:
 			recipes_links=json.load(fp)
 	return recipes_links
 
-def get_recipe(url):
+def get_recipe(url, dir_out):
 	RP=RecipeParser(url)
 	RP.analyze_url()
 	RP.clean()
+	if dir_out!="":
+		RP.save(dir_out)
+	
 	return RP
 
-def build_recipes(recompute=False):	
+def load_recipes(dir_out):
+	files=os.listdir(dir_out)
+	files=[os.path.join(dir_out,f) for f in files if f.endswith('.json') and f!=".json"]
+	saved_recipes=[]
+	for f in files:
+		RP=RecipeParser()
+		RP.load(f)
+		saved_recipes.append(RP)
+	return saved_recipes
+
+def build_recipes(recompute=False, dir_out=""):	
 	recipes_links=get_recipes(recompute)
-	recipes=list(map(get_recipe, recipes_links))
+	recipes=[]
+	if dir_out!="":
+		recipes=load_recipes(dir_out)
+	saved_links=[r.url for r in recipes]
+		
 	
+	for link in recipes_links:
+		if link not in saved_links:
+			recipes.append(get_recipe(link, dir_out))
+		else:
+			logger.info("%s already saved"%link)
 	return recipes
-	
-def save_recipes(recipes, dir_out):
-	for r in recipes:
-		r.save(dir_out)
-	
+
 if __name__=='__main__':
-	rl= build_recipes(False)
-	save_recipes(rl, 'recipes')
+	rl= build_recipes(True, "recipes")
+	
