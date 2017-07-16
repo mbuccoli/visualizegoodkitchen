@@ -141,7 +141,7 @@ class RecipeParser(GenericParser):
 		try:			
 			GenericParser.analyze_url(self, self.url)
 		except HTTPError as HE:
-			if "too many request" in str("HE"):
+			if "too many request" in str(HE):
 				time.sleep(3)
 				self.analyze_url()
 		
