@@ -11,7 +11,6 @@ logging.basicConfig(format='RECIPES:%(levelname)s:%(message)s', level=logging.DE
 index_url="http://www.thegoodkitchen.it/index/"
 out_file='recipes.json'
 
-# TODO: add logging methods
 
 def list_to_dict(attrs):
 	attrs_d={}
@@ -238,5 +237,5 @@ def build_recipes(recompute=False, dir_out=""):
 	return recipes
 
 if __name__=='__main__':
-	rl= build_recipes(True, "recipes")
+	rl= build_recipes(True, "stored_recipes")
 	
