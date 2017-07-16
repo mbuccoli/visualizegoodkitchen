@@ -213,10 +213,10 @@ def build_recipes(recompute=False):
 	
 	return recipes
 	
-def save_recipes(dir_out):
+def save_recipes(recipes, dir_out):
 	for r in recipes:
 		r.save(dir_out)
 	
 if __name__=='__main__':
 	rl= build_recipes(False)
-	save_recipes('recipes')
+	save_recipes(rl, 'recipes')
