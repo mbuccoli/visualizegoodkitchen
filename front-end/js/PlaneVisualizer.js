@@ -51,17 +51,18 @@ PlaneVisualizer.prototype = {
 		for(var p=0; p<ok.length; p++){
 			var point=this.points[ok[p]];
 			var dists=point.computeDist(x,y);
-			if(dists[2]>this.lens.radius){
-				point.x=point.x_c;
-				point.y=point.y_c;
-				point.size=point.standard_size;
-			}
-			else{
-				var displ=max_displacement*Math.sin(dists[2]/this.lens.radius*Math.PI);
-				point.x=point.x_c+displ*dists[0]/dists[2];
-				point.y=point.y_c+displ*dists[1]/dists[2];
+			point.size=point.standard_size;
+			point.x=point.x_c;
+			point.y=point.y_c;
+			if(dists[2]<this.lens.radius){
 				point.size=point.standard_size+(point.max_size-point.standard_size)*(1-dists[2]/this.lens.radius);
-			}
+				if(dists[2]>0)
+				{
+					var displ=max_displacement*Math.sin(dists[2]/this.lens.radius*Math.PI);
+					point.x=point.x_c+displ*dists[0]/dists[2];
+					point.y=point.y_c+displ*dists[1]/dists[2];				
+				}
+			}		
 			point.move();
 		}
 		
